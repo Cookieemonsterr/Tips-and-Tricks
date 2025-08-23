@@ -1,0 +1,51 @@
+{
+  "cards": [
+    {
+      "title": "New Joiner — Catalog",
+      "badge": "Getting Started",
+      "updated": "Aug 20, 2025",
+      "tags": ["onboarding", "catalog"],
+      "links": [
+        {"label": "Catalog Playbook", "url": "https://example.com/catalog-playbook", "type": "doc", "emoji": "📘"},
+        {"label": "First-week Checklist", "url": "https://example.com/checklist", "type": "checklist", "emoji": "✅"},
+        {"label": "Tools & Access", "url": "https://example.com/tools", "type": "links", "emoji": "🧰"}
+      ],
+      "tips": [
+        "Shadow a senior 30 minutes/day in week one.",
+        "Bookmark the Product Glossary before tagging items.",
+        "Use the QC Summary view to spot recurring mistakes."
+      ]
+    },
+    {
+      "title": "Customer Refunds — Support",
+      "badge": "Policy",
+      "updated": "Aug 18, 2025",
+      "tags": ["support", "quality"],
+      "links": [
+        {"label": "Refund Policy", "url": "https://example.com/refund-policy", "type": "policy", "emoji": "📑"},
+        {"label": "Reply Macro", "url": "https://example.com/refund-macro", "type": "template", "emoji": "✉️"}
+      ],
+      "tips": [
+        "Verify order ID and timestamps before promising refunds.",
+        "Escalate orders over $100 to L2 using the escalation macro.",
+        "Record outcomes in the Refund Tracker by EOD."
+      ]
+    },
+    {
+      "title": "Daily Ops — Image QC",
+      "badge": "How-to",
+      "updated": "Aug 15, 2025",
+      "tags": ["ops", "catalog"],
+      "links": [
+        {"label": "Image Sizing Guide", "url": "https://example.com/image-sizing", "type": "guide", "emoji": "🖼️"},
+        {"label": "Broken Link Checker", "url": "https://example.com/checker", "type": "tool", "emoji": "🔍"},
+        {"label": "Naming Conventions", "url": "https://example.com/naming", "type": "doc", "emoji": "🏷️"}
+      ],
+      "tips": [
+        "Prefer square images (≥ 1000×1000px) to avoid cropping.",
+        "Filenames: brand_item_variant_size.jpg",
+        "Reject images with watermarks or heavy compression."
+      ]
+    }
+  ]
+}
