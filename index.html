@@ -87,7 +87,7 @@
 
   <script>
     // ====== 1) CONFIG — for GitHub Pages, just leave as '/cards.json' ======
-    const API_URL = 'cards.json';   // or './cards.json'
+    const API_URL = 'cards.json'; // or './cards.json'
     const AUTO_REFRESH_MS = 30000; // 30s auto-refresh
 
     // ====== 2) THEME ======
@@ -185,25 +185,47 @@
     refreshBtn?.addEventListener('click', () => fetchData(true));
 
     // ====== 5) DATA FETCH ======
-    let lastETag = '';
-    async function fetchData(force=false){
-      try{
-        statusEl.textContent = force ? 'Refreshing…' : 'Loading…';
-        const res = await fetch(API_URL, { headers: lastETag && !force ? { 'If-None-Match': lastETag } : {} });
-        if(res.status === 304){ statusEl.textContent = 'Up to date'; return; }
-        lastETag = res.headers.get('ETag') || '';
-        const json = await res.json();
-        data = json; // expects { cards: [...] }
-        renderChipsFromData();
-        render();
-        const stamp = new Date().toLocaleTimeString();
-        statusEl.textContent = `Updated ${stamp}`;
-      }catch(err){ console.error(err); statusEl.textContent = 'Failed to load'; }
-    }
+    <script>
+  // ...keep the rest of your code...
 
-    fetchData();
-    setInterval(fetchData, AUTO_REFRESH_MS);
-  </script>
+  const AUTO_REFRESH_MS = 30000;
+  let lastOkTime = '';
+
+  async function fetchData(force=false){
+    try{
+      statusEl.textContent = force ? 'Refreshing…' : 'Loading…';
+
+      // cache-bust when forced (Refresh button / interval) to avoid stale 304s
+      const url = force ? `${API_URL}?t=${Date.now()}` : API_URL;
+
+      const res = await fetch(url, { cache: 'no-cache' });
+      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const ct = (res.headers.get('Content-Type') || '').toLowerCase();
+      if(!ct.includes('application/json')){
+        const peek = (await res.text()).slice(0,120);
+        throw new Error(`Expected JSON, got "${ct}". Peek: ${peek}`);
+      }
+
+      const json = await res.json();
+      if(!json || !Array.isArray(json.cards)) {
+        throw new Error('JSON missing "cards" array');
+      }
+
+      data = json;
+      renderChipsFromData();
+      render();
+      lastOkTime = new Date().toLocaleTimeString();
+      statusEl.textContent = `Updated ${lastOkTime}`;
+    }catch(err){
+      console.error(err);
+      statusEl.textContent = `Failed to load: ${err.message}`;
+    }
+  }
+
+  fetchData(true);                 // first load (cache-busted)
+  setInterval(()=>fetchData(true), AUTO_REFRESH_MS); // periodic refresh (cache-busted)
+</script>
 
   <!--
   HOW THIS LIVE VERSION WORKS
