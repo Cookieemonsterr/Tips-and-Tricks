@@ -45,6 +45,8 @@
         "Prefer square images (≥ 1000×1000px) to avoid cropping.",
         "Filenames: brand_item_variant_size.jpg",
         "Reject images with watermarks or heavy compression."
+        { "cards": [ { "title": "Hello", "tags": ["start"], "links": [], "tips": ["It works!"] } ] }
+
       ]
     }
   ]
