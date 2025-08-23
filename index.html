@@ -186,7 +186,8 @@
 
     // ====== 5) DATA FETCH ======
     <script>
-  // ...keep the rest of your code...
+  <script>
+  // keep your other code above...
 
   const AUTO_REFRESH_MS = 30000;
   let lastOkTime = '';
@@ -195,17 +196,11 @@
     try{
       statusEl.textContent = force ? 'Refreshing…' : 'Loading…';
 
-      // cache-bust when forced (Refresh button / interval) to avoid stale 304s
+      // cache-bust so GitHub Pages doesn’t hand us stale 304s
       const url = force ? `${API_URL}?t=${Date.now()}` : API_URL;
 
       const res = await fetch(url, { cache: 'no-cache' });
       if(!res.ok) throw new Error(`HTTP ${res.status}`);
-
-      const ct = (res.headers.get('Content-Type') || '').toLowerCase();
-      if(!ct.includes('application/json')){
-        const peek = (await res.text()).slice(0,120);
-        throw new Error(`Expected JSON, got "${ct}". Peek: ${peek}`);
-      }
 
       const json = await res.json();
       if(!json || !Array.isArray(json.cards)) {
@@ -223,8 +218,8 @@
     }
   }
 
-  fetchData(true);                 // first load (cache-busted)
-  setInterval(()=>fetchData(true), AUTO_REFRESH_MS); // periodic refresh (cache-busted)
+  fetchData(true);                            // first load (cache-busted)
+  setInterval(()=>fetchData(true), AUTO_REFRESH_MS); // periodic refresh
 </script>
 
   <!--
