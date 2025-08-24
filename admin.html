@@ -1,0 +1,306 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tips Hub — Simple Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --bg:#0b1020; --panel:#0f172a; --muted:#94a3b8; --text:#e5e7eb; --accent:#6ee7b7; --border:#27324a; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(120deg,#0b1020,#111a33);color:var(--text)}
+  header{position:sticky;top:0;z-index:5;background:linear-gradient(to bottom,rgba(11,16,32,.9),rgba(11,16,32,.6));backdrop-filter:blur(6px);border-bottom:1px solid var(--border)}
+  .wrap{max-width:1100px;margin:0 auto;padding:20px}
+  h1{font-size:20px;margin:0 0 6px}
+  p.sub{margin:0;color:var(--muted)}
+  .grid{display:grid;grid-template-columns:300px 1fr;gap:16px;margin-top:16px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px}
+  label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px}
+  input,textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:#0b1226;color:var(--text)}
+  input[type=password]{letter-spacing:.1em}
+  .row{display:flex;gap:8px;align-items:center}
+  .btn{border:1px solid var(--border);background:#0b1226;color:var(--text);padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:600}
+  .btn:hover{outline:2px solid rgba(110,231,183,.15)}
+  .btn.primary{background:#042b1f;border-color:#064e3b}
+  .btn.danger{background:#2b0404;border-color:#581919}
+  small.hint{color:var(--muted);display:block;margin-top:6px}
+  .list{display:grid;gap:12px}
+  .item{border:1px dashed var(--border);border-radius:12px;padding:12px;background:#0b1226}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .flex{display:flex;gap:8px}
+  .pill{border:1px solid var(--border);border-radius:999px;padding:4px 8px;font-size:11px;color:var(--muted)}
+  .status{font-size:12px;color:var(--muted)}
+  footer{padding:14px;text-align:center;color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Tips Hub — Simple Admin</h1>
+    <p class="sub">Add/edit cards without code. Paste a GitHub token only when saving. Token is never stored.</p>
+  </div>
+</header>
+
+<div class="wrap grid">
+  <!-- Left: repo & auth -->
+  <section class="card">
+    <label>Repository Owner</label>
+    <input id="owner" value="cookieemonsterr" />
+
+    <label>Repository Name</label>
+    <input id="repo" value="Tips-and-Tricks" />
+
+    <label>File Path</label>
+    <input id="path" value="cards.json" />
+
+    <label>Branch</label>
+    <input id="branch" value="main" />
+
+    <label>GitHub Token (fine-grained, contents: read & write, this repo only)</label>
+    <input id="token" type="password" placeholder="ghp_..." />
+
+    <div class="row" style="margin-top:12px">
+      <button class="btn" id="loadSite">Load from Site</button>
+      <button class="btn" id="loadRepo">Load from GitHub</button>
+    </div>
+    <small class="hint">Site = your public JSON (fast). GitHub = reads via API (gets the file sha for saving).</small>
+
+    <div style="margin-top:12px" class="row">
+      <button class="btn primary" id="save">Save to GitHub</button>
+      <button class="btn" id="export">Download JSON</button>
+    </div>
+    <div style="margin-top:8px" class="status" id="status">Idle</div>
+  </section>
+
+  <!-- Right: editor -->
+  <section class="card">
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <div class="row">
+        <span class="pill" id="count">0 cards</span>
+        <span class="pill" id="sha">sha: —</span>
+      </div>
+      <div class="row">
+        <button class="btn" id="addCard">+ Add Card</button>
+        <button class="btn danger" id="resetAll">Reset</button>
+      </div>
+    </div>
+    <div class="list" id="list"></div>
+  </section>
+</div>
+
+<footer>Tip: add tips one per line; links have label, url, type, emoji.</footer>
+
+<script>
+  const $ = (sel, el=document) => el.querySelector(sel);
+  const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
+  const statusEl = $("#status");
+  const list = $("#list");
+  const countEl = $("#count");
+  const shaEl = $("#sha");
+
+  let state = { cards: [] };
+  let fileSha = null;
+
+  function setStatus(msg){ statusEl.textContent = msg; }
+  function updateBadges(){
+    countEl.textContent = `${state.cards.length} card${state.cards.length===1?'':'s'}`;
+    shaEl.textContent = `sha: ${fileSha ? fileSha.slice(0,7) : '—'}`;
+  }
+
+  function cardToUI(card, idx){
+    const item = document.createElement('div');
+    item.className = 'item';
+    item.innerHTML = `
+      <div class="two">
+        <div>
+          <label>Title</label>
+          <input data-k="title" value="${escapeHtml(card.title||'')}" />
+        </div>
+        <div>
+          <label>Badge</label>
+          <input data-k="badge" value="${escapeHtml(card.badge||'')}" />
+        </div>
+      </div>
+      <div class="two">
+        <div>
+          <label>Updated</label>
+          <input data-k="updated" value="${escapeHtml(card.updated||'')}" />
+        </div>
+        <div>
+          <label>Tags (comma)</label>
+          <input data-k="tags" value="${escapeHtml((card.tags||[]).join(', '))}" />
+        </div>
+      </div>
+      <div>
+        <label>Tips (one per line)</label>
+        <textarea data-k="tips" rows="4">${escapeHtml((card.tips||[]).join('\n'))}</textarea>
+      </div>
+      <div>
+        <label>Links</label>
+        <div class="list links"></div>
+        <div class="row" style="margin-top:8px">
+          <button class="btn" data-add-link>Add Link</button>
+          <button class="btn danger" data-del-card>Delete Card</button>
+          <span class="pill">#${idx+1}</span>
+        </div>
+      </div>
+    `;
+    const linksWrap = $(".links", item);
+    (card.links||[]).forEach((l, li)=>{
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.style.gap = '6px';
+      row.style.marginTop = '6px';
+      row.innerHTML = `
+        <input placeholder="Label" data-k="label" value="${escapeHtml(l.label||'')}" />
+        <input placeholder="URL" data-k="url" value="${escapeHtml(l.url||'')}" />
+        <input placeholder="Type" data-k="type" value="${escapeHtml(l.type||'')}" />
+        <input placeholder="Emoji" data-k="emoji" value="${escapeHtml(l.emoji||'')}" />
+        <button class="btn danger" data-del-link>&times;</button>
+      `;
+      linksWrap.appendChild(row);
+    });
+
+    item.addEventListener('input', (e)=>{
+      const t = e.target;
+      const k = t.dataset.k;
+      if(!k) return;
+      if(k==='tags'){
+        card.tags = t.value.split(',').map(s=>s.trim()).filter(Boolean);
+      }else if(k==='tips'){
+        card.tips = t.value.split('\n').map(s=>s.trim()).filter(Boolean);
+      }else{
+        card[k] = t.value;
+      }
+    });
+
+    item.addEventListener('click', (e)=>{
+      if(e.target.matches('[data-add-link]')){
+        card.links = card.links||[];
+        card.links.push({label:'',url:'',type:'',emoji:''});
+        render();
+      }
+      if(e.target.matches('[data-del-link]')){
+        const row = e.target.closest('.row');
+        const i = Array.from(linksWrap.children).indexOf(row);
+        card.links.splice(i,1);
+        render();
+      }
+      if(e.target.matches('[data-del-card]')){
+        state.cards.splice(idx,1);
+        render();
+      }
+    });
+
+    return item;
+  }
+
+  function render(){
+    list.innerHTML = '';
+    state.cards.forEach((c,i)=> list.appendChild(cardToUI(c,i)));
+    updateBadges();
+  }
+
+  function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  // Load from public site (Pages/raw)
+  $("#loadSite").addEventListener('click', async()=>{
+    try{
+      setStatus('Loading from site…');
+      const url = `https://cookieemonsterr.github.io/Tips-and-Tricks/cards.json?ts=${Date.now()}`;
+      const res = await fetch(url, {cache:'no-cache'});
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const json = await res.json();
+      if(!json.cards) throw new Error('Missing "cards" array');
+      state = json; fileSha = null;
+      render(); setStatus('Loaded from site.');
+    }catch(err){ setStatus('Load failed: '+err.message); console.error(err); }
+  });
+
+  // Load from GitHub API (gets sha for saving)
+  $("#loadRepo").addEventListener('click', async()=>{
+    try{
+      setStatus('Loading from GitHub…');
+      const {owner, repo, path, branch} = readRepoFields();
+      const api = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}?ref=${encodeURIComponent(branch)}`;
+      const res = await fetch(api, { headers: {'Accept':'application/vnd.github+json'} });
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const meta = await res.json();
+      const content = atob((meta.content||'').replace(/\n/g,''));
+      const json = JSON.parse(content);
+      if(!json.cards) throw new Error('Missing "cards" array');
+      state = json; fileSha = meta.sha || null;
+      render(); setStatus('Loaded from GitHub.');
+    }catch(err){ setStatus('Load failed: '+err.message); console.error(err); }
+  });
+
+  function readRepoFields(){
+    return {
+      owner: $("#owner").value.trim(),
+      repo: $("#repo").value.trim(),
+      path: $("#path").value.trim() || 'cards.json',
+      branch: $("#branch").value.trim() || 'main',
+      token: $("#token").value.trim()
+    };
+  }
+
+  $("#addCard").addEventListener('click', ()=>{
+    state.cards.push({title:'',badge:'',updated:'',tags:[],links:[],tips:[]});
+    render();
+  });
+
+  $("#resetAll").addEventListener('click', ()=>{
+    if(confirm('Clear all cards from the editor (not saved yet)?')){
+      state = {cards:[]}; render();
+    }
+  });
+
+  $("#export").addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'cards.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  $("#save").addEventListener('click', async()=>{
+    const {owner, repo, path, branch, token} = readRepoFields();
+    if(!token){ alert('Paste a GitHub token first.'); return; }
+    try{
+      setStatus('Saving…');
+      const api = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`;
+      const content = btoa(unescape(encodeURIComponent(JSON.stringify(state, null, 2)))); // UTF-8 safe
+      const body = {
+        message: `Update ${path} via Admin UI`,
+        content,
+        branch
+      };
+      if(fileSha) body.sha = fileSha;
+      const res = await fetch(api, {
+        method:'PUT',
+        headers:{
+          'Accept':'application/vnd.github+json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(body)
+      });
+      if(!res.ok){
+        const t = await res.text();
+        throw new Error('HTTP '+res.status+': '+t.slice(0,200));
+      }
+      const json = await res.json();
+      fileSha = json.content && json.content.sha || null;
+      setStatus('Saved ✓');
+      updateBadges();
+    }catch(err){
+      setStatus('Save failed: '+err.message);
+      console.error(err);
+    }
+  });
+</script>
+</body>
+</html>
