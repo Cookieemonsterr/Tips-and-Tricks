@@ -4,37 +4,41 @@
       "title": "References",
       "badge": "Resources",
       "updated": "Aug 24, 2025",
-      "tags": ["references", "catalog", "support"],
+      "tags": [
+        "references",
+        "catalog",
+        "support"
+      ],
       "links": [
         {
           "label": "Zone Extensions",
           "url": "https://docs.google.com/spreadsheets/d/1H0jlQxb-wEi7gntBAFGnY9X6I-szRQV65-5KwN2vzXk/edit?gid=0#gid=0",
           "type": "sheet",
-          "emoji": "📊"
+          "emoji": "ð"
         },
         {
           "label": "Glossary sheet",
           "url": "https://docs.google.com/spreadsheets/d/1y8BncpPg1nMSBzxPNx10_NDx0jaHOuGJ/edit?gid=2126555409#gid=2126555409",
           "type": "sheet",
-          "emoji": "📖"
+          "emoji": "ð"
         },
         {
           "label": "Tags Tree",
           "url": "https://docs.google.com/spreadsheets/d/1I7sN0uRWrOHeP3qOv2djrFWEILEMez7dE7ivfp23jj4/edit?gid=120990296#gid=120990296",
           "type": "sheet",
-          "emoji": "🌳"
+          "emoji": "ð³"
         },
         {
           "label": "Bank codes for Jordan",
           "url": "https://docs.google.com/spreadsheets/d/13hkYqyfFkRnyrJLnNVtj4bwYoFhWSrQDnTFjZItTe04/edit?gid=0#gid=0",
           "type": "sheet",
-          "emoji": "🏦"
+          "emoji": "ð¦"
         },
         {
           "label": "Bank codes for UAE",
           "url": "https://docs.google.com/spreadsheets/d/1YMEMQFe3q-alg-ThaiXGZMAyCM5NfWN6cNJ-oZueSAQ/edit?gid=0#gid=0",
           "type": "sheet",
-          "emoji": "🏦"
+          "emoji": "ð¦"
         }
       ],
       "tips": []
@@ -43,7 +47,11 @@
       "title": "Reminders",
       "badge": "Best Practices",
       "updated": "Aug 24, 2025",
-      "tags": ["reminders", "process", "quality"],
+      "tags": [
+        "reminders",
+        "process",
+        "quality"
+      ],
       "links": [],
       "tips": [
         "Always use the glossary as a first reference.",
@@ -57,29 +65,42 @@
       "title": "Tools",
       "badge": "Utilities",
       "updated": "Aug 24, 2025",
-      "tags": ["tools"],
+      "tags": [
+        "tools"
+      ],
       "links": [
         {
           "label": "IBAN Checker",
           "url": "https://www.ibancalculator.com/",
           "type": "tool",
-          "emoji": "🧮"
+          "emoji": "ð§®"
         },
         {
           "label": "Image Enhancer",
           "url": "https://www.cutout.pro/photo-enhancer-sharpener-upscaler",
           "type": "tool",
-          "emoji": "🖼️"
+          "emoji": "ð¼ï¸"
         },
         {
           "label": "Menu Scrapping Tool",
           "url": "https://docs.google.com/spreadsheets/d/1nas0sQwaQkLRNB2VOXHjIrXXBvepuPN8VCwaTYaA49k/edit?gid=1116334825#gid=1116334825",
           "type": "sheet",
-          "emoji": "📄"
+          "emoji": "ð"
         }
       ],
       "tips": []
+    },
+    {
+      "title": "Tips",
+      "badge": "tips",
+      "updated": "Aug 24, 2025",
+      "tags": [
+        "Tips"
+      ],
+      "links": [],
+      "tips": [
+        "Our tips for you"
+      ]
     }
   ]
 }
-
