@@ -1,53 +1,85 @@
 {
   "cards": [
     {
-      "title": "New Joiner — Catalog",
-      "badge": "Getting Started",
-      "updated": "Aug 20, 2025",
-      "tags": ["onboarding", "catalog"],
+      "title": "References",
+      "badge": "Resources",
+      "updated": "Aug 24, 2025",
+      "tags": ["references", "catalog", "support"],
       "links": [
-        {"label": "Catalog Playbook", "url": "https://example.com/catalog-playbook", "type": "doc", "emoji": "📘"},
-        {"label": "First-week Checklist", "url": "https://example.com/checklist", "type": "checklist", "emoji": "✅"},
-        {"label": "Tools & Access", "url": "https://example.com/tools", "type": "links", "emoji": "🧰"}
+        {
+          "label": "Zone Extensions",
+          "url": "https://docs.google.com/spreadsheets/d/1H0jlQxb-wEi7gntBAFGnY9X6I-szRQV65-5KwN2vzXk/edit?gid=0#gid=0",
+          "type": "sheet",
+          "emoji": "📊"
+        },
+        {
+          "label": "Glossary sheet",
+          "url": "https://docs.google.com/spreadsheets/d/1y8BncpPg1nMSBzxPNx10_NDx0jaHOuGJ/edit?gid=2126555409#gid=2126555409",
+          "type": "sheet",
+          "emoji": "📖"
+        },
+        {
+          "label": "Tags Tree",
+          "url": "https://docs.google.com/spreadsheets/d/1I7sN0uRWrOHeP3qOv2djrFWEILEMez7dE7ivfp23jj4/edit?gid=120990296#gid=120990296",
+          "type": "sheet",
+          "emoji": "🌳"
+        },
+        {
+          "label": "Bank codes for Jordan",
+          "url": "https://docs.google.com/spreadsheets/d/13hkYqyfFkRnyrJLnNVtj4bwYoFhWSrQDnTFjZItTe04/edit?gid=0#gid=0",
+          "type": "sheet",
+          "emoji": "🏦"
+        },
+        {
+          "label": "Bank codes for UAE",
+          "url": "https://docs.google.com/spreadsheets/d/1YMEMQFe3q-alg-ThaiXGZMAyCM5NfWN6cNJ-oZueSAQ/edit?gid=0#gid=0",
+          "type": "sheet",
+          "emoji": "🏦"
+        }
       ],
+      "tips": []
+    },
+    {
+      "title": "Reminders",
+      "badge": "Best Practices",
+      "updated": "Aug 24, 2025",
+      "tags": ["reminders", "process", "quality"],
+      "links": [],
       "tips": [
-        "Shadow a senior 30 minutes/day in week one.",
-        "Bookmark the Product Glossary before tagging items.",
-        "Use the QC Summary view to spot recurring mistakes."
+        "Always use the glossary as a first reference.",
+        "When working on a scrapping ticket don't forget to drop the offline menu in the comments before working.",
+        "Read the request with caution and attention to every detail to avoid mistakes.",
+        "Pay attention to the status of your ticket and make sure you're moving it to the correct stage.",
+        "Don't forget to import from the live outlet to the dummy before working on updates."
       ]
     },
     {
-      "title": "Customer Refunds — Support",
-      "badge": "Policy",
-      "updated": "Aug 18, 2025",
-      "tags": ["support", "quality"],
+      "title": "Tools",
+      "badge": "Utilities",
+      "updated": "Aug 24, 2025",
+      "tags": ["tools"],
       "links": [
-        {"label": "Refund Policy", "url": "https://example.com/refund-policy", "type": "policy", "emoji": "📑"},
-        {"label": "Reply Macro", "url": "https://example.com/refund-macro", "type": "template", "emoji": "✉️"}
+        {
+          "label": "IBAN Checker",
+          "url": "https://www.ibancalculator.com/",
+          "type": "tool",
+          "emoji": "🧮"
+        },
+        {
+          "label": "Image Enhancer",
+          "url": "https://www.cutout.pro/photo-enhancer-sharpener-upscaler",
+          "type": "tool",
+          "emoji": "🖼️"
+        },
+        {
+          "label": "Menu Scrapping Tool",
+          "url": "https://docs.google.com/spreadsheets/d/1nas0sQwaQkLRNB2VOXHjIrXXBvepuPN8VCwaTYaA49k/edit?gid=1116334825#gid=1116334825",
+          "type": "sheet",
+          "emoji": "📄"
+        }
       ],
-      "tips": [
-        "Verify order ID and timestamps before promising refunds.",
-        "Escalate orders over $100 to L2 using the escalation macro.",
-        "Record outcomes in the Refund Tracker by EOD."
-      ]
-    },
-    {
-      "title": "Daily Ops — Image QC",
-      "badge": "How-to",
-      "updated": "Aug 15, 2025",
-      "tags": ["ops", "catalog"],
-      "links": [
-        {"label": "Image Sizing Guide", "url": "https://example.com/image-sizing", "type": "guide", "emoji": "🖼️"},
-        {"label": "Broken Link Checker", "url": "https://example.com/checker", "type": "tool", "emoji": "🔍"},
-        {"label": "Naming Conventions", "url": "https://example.com/naming", "type": "doc", "emoji": "🏷️"}
-      ],
-      "tips": [
-        "Prefer square images (≥ 1000×1000px) to avoid cropping.",
-        "Filenames: brand_item_variant_size.jpg",
-        "Reject images with watermarks or heavy compression."
-        { "cards": [ { "title": "Hello", "tags": ["start"], "links": [], "tips": ["It works!"] } ] }
-
-      ]
+      "tips": []
     }
   ]
 }
+
