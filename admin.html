@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Tips Hub — Simple Admin</title>
+<title>Tips Hub — Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -30,22 +30,22 @@
   .list{display:grid;gap:12px}
   .item{border:1px dashed var(--border);border-radius:12px;padding:12px;background:#0b1226}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .flex{display:flex;gap:8px}
   .pill{border:1px solid var(--border);border-radius:999px;padding:4px 8px;font-size:11px;color:var(--muted)}
   .status{font-size:12px;color:var(--muted)}
   footer{padding:14px;text-align:center;color:var(--muted)}
+  @media (max-width: 900px){ .grid{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
 <header>
   <div class="wrap">
-    <h1>Tips Hub — Simple Admin</h1>
-    <p class="sub">Add/edit cards without code. Paste a GitHub token only when saving. Token is never stored.</p>
+    <h1>Tips Hub — Admin</h1>
+    <p class="sub">Edit <code>cards.json</code> using a simple form. Token can be remembered on this device only.</p>
   </div>
 </header>
 
 <div class="wrap grid">
-  <!-- Left: repo & auth -->
+  <!-- LEFT: repo & auth -->
   <section class="card">
     <label>Repository Owner</label>
     <input id="owner" value="cookieemonsterr" />
@@ -59,14 +59,23 @@
     <label>Branch</label>
     <input id="branch" value="main" />
 
-    <label>GitHub Token (fine-grained, contents: read & write, this repo only)</label>
-    <input id="token" type="password" placeholder="ghp_..." />
+    <label>GitHub Token (fine-grained; Contents: Read & Write; this repo only)</label>
+    <div class="row">
+      <input id="token" type="password" placeholder="ghp_…" style="flex:1" />
+      <button class="btn" id="toggleToken" title="Show/hide">Show</button>
+    </div>
+    <div class="row">
+      <label><input type="checkbox" id="remember" /> Remember token on this device</label>
+      <button class="btn" id="clearToken">Clear saved</button>
+    </div>
 
     <div class="row" style="margin-top:12px">
       <button class="btn" id="loadSite">Load from Site</button>
       <button class="btn" id="loadRepo">Load from GitHub</button>
     </div>
-    <small class="hint">Site = your public JSON (fast). GitHub = reads via API (gets the file sha for saving).</small>
+    <small class="hint">
+      Site = public JSON from Pages. GitHub = reads via API (gets file SHA for safe saving).
+    </small>
 
     <div style="margin-top:12px" class="row">
       <button class="btn primary" id="save">Save to GitHub</button>
@@ -75,7 +84,7 @@
     <div style="margin-top:8px" class="status" id="status">Idle</div>
   </section>
 
-  <!-- Right: editor -->
+  <!-- RIGHT: editor -->
   <section class="card">
     <div class="row" style="justify-content:space-between;align-items:center">
       <div class="row">
@@ -91,24 +100,48 @@
   </section>
 </div>
 
-<footer>Tip: add tips one per line; links have label, url, type, emoji.</footer>
+<footer>Tips: add tips one per line; links have label, url, type, emoji. The token is saved only in this browser’s localStorage if “remember” is checked.</footer>
 
 <script>
-  const $ = (sel, el=document) => el.querySelector(sel);
+  // ===== config for loading from your public site =====
+  const SITE_JSON = 'https://cookieemonsterr.github.io/Tips-and-Tricks/cards.json';
+
+  // ===== helpers =====
+  const $  = (sel, el=document) => el.querySelector(sel);
   const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
   const statusEl = $("#status");
   const list = $("#list");
   const countEl = $("#count");
   const shaEl = $("#sha");
+  const tokenEl = $("#token");
+  const rememberEl = $("#remember");
+  const toggleBtn = $("#toggleToken");
+  const clearBtn  = $("#clearToken");
 
   let state = { cards: [] };
   let fileSha = null;
+
+  // Prefill token if previously saved on this device
+  const savedToken = localStorage.getItem('tips_token');
+  if (savedToken) { tokenEl.value = savedToken; rememberEl.checked = true; }
+
+  toggleBtn.addEventListener('click', () => {
+    tokenEl.type = tokenEl.type === 'password' ? 'text' : 'password';
+    toggleBtn.textContent = tokenEl.type === 'password' ? 'Show' : 'Hide';
+  });
+
+  clearBtn.addEventListener('click', () => {
+    localStorage.removeItem('tips_token');
+    tokenEl.value = '';
+    rememberEl.checked = false;
+  });
 
   function setStatus(msg){ statusEl.textContent = msg; }
   function updateBadges(){
     countEl.textContent = `${state.cards.length} card${state.cards.length===1?'':'s'}`;
     shaEl.textContent = `sha: ${fileSha ? fileSha.slice(0,7) : '—'}`;
   }
+  function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
   function cardToUI(card, idx){
     const item = document.createElement('div');
@@ -146,10 +179,9 @@
           <button class="btn danger" data-del-card>Delete Card</button>
           <span class="pill">#${idx+1}</span>
         </div>
-      </div>
-    `;
-    const linksWrap = $(".links", item);
-    (card.links||[]).forEach((l, li)=>{
+      </div>`;
+    const linksWrap = item.querySelector('.links');
+    (card.links||[]).forEach((l)=>{
       const row = document.createElement('div');
       row.className = 'row';
       row.style.gap = '6px';
@@ -159,8 +191,7 @@
         <input placeholder="URL" data-k="url" value="${escapeHtml(l.url||'')}" />
         <input placeholder="Type" data-k="type" value="${escapeHtml(l.type||'')}" />
         <input placeholder="Emoji" data-k="emoji" value="${escapeHtml(l.emoji||'')}" />
-        <button class="btn danger" data-del-link>&times;</button>
-      `;
+        <button class="btn danger" data-del-link>&times;</button>`;
       linksWrap.appendChild(row);
     });
 
@@ -190,8 +221,7 @@
         render();
       }
       if(e.target.matches('[data-del-card]')){
-        state.cards.splice(idx,1);
-        render();
+        if(confirm('Delete this card?')){ state.cards.splice(idx,1); render(); }
       }
     });
 
@@ -204,23 +234,32 @@
     updateBadges();
   }
 
-  function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function readRepoFields(){
+    const token = tokenEl.value.trim();
+    if (rememberEl.checked) localStorage.setItem('tips_token', token);
+    else localStorage.removeItem('tips_token');
+    return {
+      owner:  document.getElementById('owner').value.trim(),
+      repo:   document.getElementById('repo').value.trim(),
+      path:   document.getElementById('path').value.trim() || 'cards.json',
+      branch: document.getElementById('branch').value.trim() || 'main',
+      token
+    };
+  }
 
-  // Load from public site (Pages/raw)
+  // Load from public site (fast)
   $("#loadSite").addEventListener('click', async()=>{
     try{
       setStatus('Loading from site…');
-      const url = `https://cookieemonsterr.github.io/Tips-and-Tricks/cards.json?ts=${Date.now()}`;
-      const res = await fetch(url, {cache:'no-cache'});
+      const res = await fetch(SITE_JSON+'?ts='+Date.now(), { cache:'no-cache' });
       if(!res.ok) throw new Error('HTTP '+res.status);
       const json = await res.json();
       if(!json.cards) throw new Error('Missing "cards" array');
-      state = json; fileSha = null;
-      render(); setStatus('Loaded from site.');
+      state = json; fileSha = null; render(); setStatus('Loaded from site.');
     }catch(err){ setStatus('Load failed: '+err.message); console.error(err); }
   });
 
-  // Load from GitHub API (gets sha for saving)
+  // Load from GitHub (gets file sha)
   $("#loadRepo").addEventListener('click', async()=>{
     try{
       setStatus('Loading from GitHub…');
@@ -232,32 +271,13 @@
       const content = atob((meta.content||'').replace(/\n/g,''));
       const json = JSON.parse(content);
       if(!json.cards) throw new Error('Missing "cards" array');
-      state = json; fileSha = meta.sha || null;
-      render(); setStatus('Loaded from GitHub.');
+      state = json; fileSha = meta.sha || null; render(); setStatus('Loaded from GitHub.');
     }catch(err){ setStatus('Load failed: '+err.message); console.error(err); }
   });
 
-  function readRepoFields(){
-    return {
-      owner: $("#owner").value.trim(),
-      repo: $("#repo").value.trim(),
-      path: $("#path").value.trim() || 'cards.json',
-      branch: $("#branch").value.trim() || 'main',
-      token: $("#token").value.trim()
-    };
-  }
-
-  $("#addCard").addEventListener('click', ()=>{
-    state.cards.push({title:'',badge:'',updated:'',tags:[],links:[],tips:[]});
-    render();
-  });
-
-  $("#resetAll").addEventListener('click', ()=>{
-    if(confirm('Clear all cards from the editor (not saved yet)?')){
-      state = {cards:[]}; render();
-    }
-  });
-
+  // Add/reset/export
+  $("#addCard").addEventListener('click', ()=>{ state.cards.push({title:'',badge:'',updated:'',tags:[],links:[],tips:[]}); render(); });
+  $("#resetAll").addEventListener('click', ()=>{ if(confirm('Clear all cards from the editor (not saved yet)?')){ state = {cards:[]}; render(); }});
   $("#export").addEventListener('click', ()=>{
     const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
     const a = document.createElement('a');
@@ -267,19 +287,30 @@
     URL.revokeObjectURL(a.href);
   });
 
+  // Save to GitHub (PUT /contents)
   $("#save").addEventListener('click', async()=>{
     const {owner, repo, path, branch, token} = readRepoFields();
-    if(!token){ alert('Paste a GitHub token first.'); return; }
+    if(!token){ alert('Paste or remember a GitHub token first.'); return; }
+
     try{
       setStatus('Saving…');
+
+      // Always fetch latest sha to avoid conflicts
+      const metaRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}?ref=${encodeURIComponent(branch)}`, {
+        headers: {'Accept':'application/vnd.github+json'}
+      });
+      if (metaRes.ok) {
+        const meta = await metaRes.json();
+        fileSha = meta.sha || null;
+      } else if (metaRes.status !== 404) {
+        throw new Error('Could not fetch sha: HTTP '+metaRes.status);
+      }
+
       const api = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`;
-      const content = btoa(unescape(encodeURIComponent(JSON.stringify(state, null, 2)))); // UTF-8 safe
-      const body = {
-        message: `Update ${path} via Admin UI`,
-        content,
-        branch
-      };
+      const contentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(state, null, 2)))); // UTF-8 safe
+      const body = { message: `Update ${path} via Admin UI`, content: contentB64, branch };
       if(fileSha) body.sha = fileSha;
+
       const res = await fetch(api, {
         method:'PUT',
         headers:{
@@ -288,12 +319,12 @@
         },
         body: JSON.stringify(body)
       });
-      if(!res.ok){
-        const t = await res.text();
-        throw new Error('HTTP '+res.status+': '+t.slice(0,200));
-      }
-      const json = await res.json();
-      fileSha = json.content && json.content.sha || null;
+
+      const txt = await res.text();
+      if(!res.ok) throw new Error('HTTP '+res.status+': '+txt.slice(0,200));
+      const out = JSON.parse(txt);
+      fileSha = out.content && out.content.sha || null;
+
       setStatus('Saved ✓');
       updateBadges();
     }catch(err){
@@ -302,5 +333,8 @@
     }
   });
 </script>
+</body>
+</html>
+
 </body>
 </html>
