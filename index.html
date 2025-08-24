@@ -3,53 +3,126 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Employee Tips Hub — LIVE (Fixed)</title>
+  <title>Catalog Guide — LIVE</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root{ --bg:0 0% 100%; --text:222 47% 11%; --muted:215 16% 47%; --card:0 0% 100%; --ring:221 83% 53%; --border:220 14% 90%; --brand:259 94% 80%; --brand-2:192 95% 88%; }
-    .dark{ --bg:222 47% 8%; --text:0 0% 98%; --muted:215 16% 75%; --card:222 47% 10%; --ring:259 94% 75%; --border:223 14% 20%; --brand:259 94% 70%; --brand-2:192 95% 36%; }
-    *{box-sizing:border-box} html,body{height:100%}
-    body{margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:hsl(var(--bg)); color:hsl(var(--text)); line-height:1.45}
+    /* ---------- Careem-ish theme ---------- */
+    :root{
+      --bg:0 0% 100%;
+      --text:222 47% 11%;
+      --muted:215 16% 47%;
+      --card:0 0% 100%;
+      --border:220 14% 90%;
+      --brand:152 66% 40%;     /* primary green */
+      --brand-2:165 70% 45%;   /* teal-green */
+      --ring:152 66% 40%;      /* focus/hover ring */
+    }
+    .dark{
+      --bg:222 47% 8%;
+      --text:0 0% 98%;
+      --muted:215 16% 75%;
+      --card:222 47% 10%;
+      --border:223 14% 20%;
+      --brand:152 60% 48%;
+      --brand-2:165 64% 52%;
+      --ring:152 60% 48%;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:hsl(var(--bg));
+      color:hsl(var(--text));
+      line-height:1.45
+    }
+
     .container{max-width:1200px;margin:0 auto;padding:24px}
-    header.site{position:sticky;top:0;z-index:10;backdrop-filter:saturate(1.1) blur(8px);background:linear-gradient(to bottom,hsl(var(--bg)/.9),hsl(var(--bg)/.75));border-bottom:1px solid hsl(var(--border))}
+
+    header.site{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter:saturate(1.1) blur(8px);
+      background:
+        linear-gradient(to bottom, hsl(var(--bg)/.92), hsl(var(--bg)/.78)),
+        radial-gradient(180px 60px at 10% 0%, hsl(var(--brand)/.08), transparent 60%);
+      border-bottom:1px solid hsl(var(--border));
+      border-bottom-color: hsl(var(--brand)/.20);
+      box-shadow: 0 6px 24px -18px hsl(var(--brand)/.50);
+    }
     .site-inner{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:16px 24px;max-width:1200px;margin:0 auto}
     .title{display:flex;align-items:center;gap:12px}
-    .logo{width:36px;height:36px;display:grid;place-items:center;border-radius:10px;border:1px solid hsl(var(--border));background:radial-gradient(120px 60px at -20% 120%,hsl(var(--brand)/.35),transparent 60%),radial-gradient(120px 60px at 120% -20%,hsl(var(--brand-2)/.35),transparent 60%),hsl(var(--card));box-shadow:0 1px 0 hsl(0 0% 100%/.6) inset,0 10px 22px -12px hsl(0 0% 0%/.25)}
-    .title h1{font-size:18px;margin:0} .title p{margin:0;font-size:12px;color:hsl(var(--muted))}
+    .logo{
+      width:36px;height:36px;display:grid;place-items:center;border-radius:10px;border:1px solid hsl(var(--border));
+      background:
+        radial-gradient(120px 60px at -20% 120%, hsl(var(--brand)/.45), transparent 60%),
+        radial-gradient(120px 60px at 120% -20%, hsl(var(--brand-2)/.35), transparent 60%),
+        hsl(var(--card));
+      box-shadow:0 1px 0 hsl(0 0% 100%/.6) inset,0 10px 22px -12px hsl(0 0% 0%/.25)
+    }
+    .title h1{
+      font-size:18px;margin:0;
+      background: linear-gradient(90deg, hsl(var(--text)), hsl(var(--brand)));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .title p{margin:0;font-size:12px;color:hsl(var(--muted))}
     .actions{display:flex;gap:8px;align-items:center}
     .btn{appearance:none;border:1px solid hsl(var(--border));background:hsl(var(--card));color:inherit;padding:10px 12px;border-radius:10px;font-weight:600;cursor:pointer}
-    .btn:hover{box-shadow:0 0 0 4px hsl(var(--ring)/.12)}
+    .btn:hover{box-shadow:0 0 0 4px hsl(var(--ring)/.16)}
+    .btn.primary{
+      background: linear-gradient(0deg, hsl(var(--brand)/.20), hsl(var(--brand)/.15));
+      border-color: hsl(var(--brand)/.55);
+    }
+    .btn.primary:hover{ box-shadow: 0 0 0 5px hsl(var(--ring)/.18) }
+
     .searchbar{display:flex;gap:8px;align-items:center;padding:16px 24px;max-width:1200px;margin:0 auto}
     .input{flex:1;display:flex;align-items:center;gap:8px;border:1px solid hsl(var(--border));background:hsl(var(--card));border-radius:12px;padding:10px 12px}
     .input input{border:0;outline:0;width:100%;background:transparent;color:inherit;font-size:14px}
+    .input:focus-within{ box-shadow:0 0 0 4px hsl(var(--ring)/.14); border-color:hsl(var(--brand)/.55) }
+
     .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;padding:0 24px 16px}
     .chip{border:1px dashed hsl(var(--border));padding:6px 10px;border-radius:999px;cursor:pointer;font-size:12px;user-select:none}
-    .chip.active{border-style:solid;background:hsl(var(--brand)/.25)}
+    .chip.active{border-color:hsl(var(--brand)/.55); background:hsl(var(--brand)/.18)}
+
     .status{display:flex;gap:8px;align-items:center;color:hsl(var(--muted));font-size:12px}
 
     .grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(280px,1fr));gap:16px}
-    .card{border:1px solid hsl(var(--border));background:hsl(var(--card));border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;transition:transform .15s ease, box-shadow .15s ease}
-    .card:hover{transform:translateY(-2px);box-shadow:0 10px 28px -18px hsl(0 0% 0%/.4)}
+    .card{
+      border:1px solid hsl(var(--border));background:hsl(var(--card));border-radius:16px;padding:16px;
+      display:flex;flex-direction:column;gap:12px;transition:transform .15s ease, box-shadow .15s ease
+    }
+    .card:hover{transform:translateY(-2px);box-shadow:0 12px 32px -18px hsl(var(--brand)/.35)}
     .card header{display:flex;gap:10px;align-items:center;justify-content:space-between}
-    .badge{font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid hsl(var(--border));background:linear-gradient(0deg,hsl(var(--brand)/.25),hsl(var(--brand)/.18))}
+    .badge{font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid hsl(var(--brand)/.55);background:linear-gradient(0deg,hsl(var(--brand)/.22),hsl(var(--brand)/.16))}
     .card h3{margin:0;font-size:16px}
     .meta{font-size:12px;color:hsl(var(--muted))}
     .links{display:grid;gap:8px}
     .link{display:flex;align-items:center;gap:8px;padding:8px;border-radius:10px;border:1px dashed hsl(var(--border));text-decoration:none;color:inherit}
-    .link:hover{border-style:solid;box-shadow:0 0 0 4px hsl(var(--ring)/.12)}
-    .link .pill{margin-left:auto;font-size:11px;border:1px solid hsl(var(--border));padding:4px 6px;border-radius:999px}
+    .link:hover{border-color:hsl(var(--brand)/.55); box-shadow:0 0 0 4px hsl(var(--ring)/.14)}
+    .link .pill{margin-left:auto;font-size:11px;border:1px solid hsl(var(--brand)/.45);padding:4px 6px;border-radius:999px}
     .tips{margin:0;padding-left:18px;display:grid;gap:6px}
     .tips li{margin:0}
     .tags{display:flex;flex-wrap:wrap;gap:6px}
-    .tag{font-size:11px;border:1px solid hsl(var(--border));padding:4px 6px;border-radius:999px}
+    .tag{font-size:11px;border:1px solid hsl(var(--brand)/.45);padding:4px 6px;border-radius:999px;background:hsl(var(--brand)/.08)}
     .row{display:flex;gap:8px;align-items:center;justify-content:space-between}
     .icon-btn{border:1px solid hsl(var(--border));background:hsl(var(--card));border-radius:10px;padding:8px;cursor:pointer}
     .icon-btn:hover{box-shadow:0 0 0 4px hsl(var(--ring)/.12)}
     .empty{display:none;text-align:center;color:hsl(var(--muted));padding:40px}
     .grid:has(.card[hidden]):not(:has(.card:not([hidden])) ) + .empty{display:block}
-    @media (max-width:600px){.site-inner{flex-direction:column;align-items:flex-start;gap:6px}.searchbar{flex-direction:column}}
+
+    /* Optional: thumbnails (if you set card.image) */
+    .thumb{
+      width:100%; height:140px; object-fit:cover;
+      border-radius:12px; border:1px solid hsl(var(--border));
+      background:hsl(var(--card));
+    }
+
+    @media (max-width:600px){
+      .site-inner{flex-direction:column;align-items:flex-start;gap:6px}
+      .searchbar{flex-direction:column}
+    }
   </style>
 </head>
 <body>
@@ -59,18 +132,21 @@
         <div class="logo" aria-hidden="true">💡</div>
         <div>
           <h1>Catalog Guide</h1>
+          <p>Live tips & links for the team</p>
         </div>
       </div>
       <div class="actions">
         <span class="status" id="status">Loading…</span>
         <button class="btn" id="themeBtn" aria-label="Toggle theme">Toggle theme</button>
         <button class="btn" id="resetBtn" aria-label="Clear filters">Clear filters</button>
-        <button class="btn" id="refreshBtn" aria-label="Refresh data">Refresh</button>
+        <button class="btn primary" id="refreshBtn" aria-label="Refresh data">Refresh</button>
       </div>
     </div>
     <div class="searchbar">
       <div class="input" role="search">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M21 21l-4.3-4.3M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M21 21l-4.3-4.3M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"/>
+        </svg>
         <input id="q" placeholder="Search topic, tip, or link…" aria-label="Search" />
       </div>
     </div>
@@ -105,7 +181,6 @@
     const statusEl = document.getElementById('status');
     const refreshBtn = document.getElementById('refreshBtn');
     const resetBtn = document.getElementById('resetBtn');
-    const testBtn = document.getElementById('testBtn');
 
     let activeChips = new Set(JSON.parse(localStorage.getItem('tips-chips') || '[]'));
     let data = { cards: [] };
@@ -118,36 +193,57 @@
       return false;
     }
 
+    // ====== RENDER ======
     function render(){
       grid.innerHTML = '';
       const term = normalize(q.value);
       let visible = 0;
+
       data.cards.forEach(card => {
-        const hay = [card.title, (card.tags||[]).join(' '), (card.tips||[]).join(' '), (card.links||[]).map(l=>l.label).join(' ')].join(' ').toLowerCase();
+        const hay = [
+          card.title,
+          (card.tags||[]).join(' '),
+          (card.tips||[]).join(' '),
+          (card.links||[]).map(l=>l.label).join(' ')
+        ].join(' ').toLowerCase();
+
         const passText = !term || hay.includes(term);
         const passChip = matchesChips(card);
         const show = passText && passChip;
+
         const el = document.createElement('article');
         el.className = 'card';
         if(!show) el.hidden = true; else visible++;
+
         el.innerHTML = `
           <header>
             <h3>${card.title||''}</h3>
             ${card.badge ? `<span class="badge">${card.badge}</span>` : ''}
           </header>
+          ${card.image ? `<img class="thumb" src="${card.image}" alt="${card.image_alt||card.title||''}" loading="lazy">` : ''}
           <div class="meta">${card.updated ? `Updated: <time>${card.updated}</time>` : ''}</div>
           <nav class="links">
-            ${(card.links||[]).map(l=>`<a class="link" href="${l.url}" target="_blank" rel="noopener">${l.emoji||'🔗'} ${l.label}<span class="pill">${l.type||''}</span></a>`).join('')}
+            ${(card.links||[]).map(l=>`
+              <a class="link" href="${l.url}" target="_blank" rel="noopener">
+                ${l.emoji||'🔗'} ${l.label}
+                <span class="pill">${l.type||''}</span>
+              </a>
+            `).join('')}
           </nav>
           ${(card.tips&&card.tips.length) ? `<ul class="tips">${card.tips.map(t=>`<li>${t}</li>`).join('')}</ul>` : ''}
           <div class="tags">${(card.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
           <div class="row">
             <small class="meta">${(card.links||[]).length} links • ${(card.tips||[]).length} tips</small>
             <button class="icon-btn" data-open-all title="Open all links in this card">Open all</button>
-          </div>`;
+          </div>
+        `;
+
         grid.appendChild(el);
       });
+
       empty.style.display = visible ? 'none' : 'block';
+
+      // open-all handler
       grid.querySelectorAll('[data-open-all]').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const card = e.currentTarget.closest('.card');
@@ -168,7 +264,8 @@
         chip.textContent = tag;
         chip.addEventListener('click', () => {
           chip.classList.toggle('active');
-          if(chip.classList.contains('active')) activeChips.add(chip.dataset.chip); else activeChips.delete(chip.dataset.chip);
+          if(chip.classList.contains('active')) activeChips.add(chip.dataset.chip);
+          else activeChips.delete(chip.dataset.chip);
           localStorage.setItem('tips-chips', JSON.stringify(Array.from(activeChips)));
           render();
         });
@@ -176,26 +273,20 @@
       });
     }
 
+    // ====== EVENTS ======
     q.addEventListener('input', render);
-    resetBtn.addEventListener('click', () => { q.value=''; activeChips.clear(); localStorage.removeItem('tips-chips'); render(); chipsWrap.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); });
-    refreshBtn.addEventListener('click', () => fetchData(true));
-    testBtn.addEventListener('click', async () => {
-      const url = API_URL + '?test=' + Date.now();
-      console.log('TEST fetch:', url);
-      const res = await fetch(url, { cache: 'no-cache' });
-      console.log('TEST status:', res.status);
-      const text = await res.text();
-      console.log('TEST body peek:', text.slice(0, 150));
-      alert('Check Console (F12) → TEST logs.');
+    resetBtn.addEventListener('click', () => {
+      q.value=''; activeChips.clear(); localStorage.removeItem('tips-chips'); render();
+      chipsWrap.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
     });
+    refreshBtn.addEventListener('click', () => fetchData(true));
 
+    // ====== DATA FETCH ======
     async function fetchData(force=false){
       try{
         statusEl.textContent = force ? 'Refreshing…' : 'Loading…';
         const url = force ? `${API_URL}?t=${Date.now()}` : API_URL;
-        console.log('Fetching:', url);
         const res = await fetch(url, { cache: 'no-cache' });
-        console.log('Response status:', res.status, res.statusText);
         if(!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = await res.json();
         if(!json || !Array.isArray(json.cards)) {
