@@ -351,3 +351,17 @@
       if(!putRes.ok) throw new Error(`HTTP ${putRes.status}: ${txt.slice(0,200)}`);
       const out = JSON.parse(txt);
       fileSha = out?.content?.sha || null;
+
+      setStatus('Saved ✓');
+      updateBadges();
+    }catch(err){
+      console.error(err);
+      setStatus('Save failed: '+err.message);
+    }
+  });
+
+  // Start with empty editor
+  render();
+</script>
+</body>
+</html>
